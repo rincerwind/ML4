@@ -21,17 +21,17 @@ function LinearRegValidation(x, t, xTest, xTest_t, maxOrd)
     w = TrainLinearReg(X,t);
     
     % Compute losses
-    (train_loss(i)) = LinearRegCost(X, t, w);
-    (test_loss(i)) = LinearRegCost(XTest, xTest_t, w);
+    train_loss(i) = LinearRegCost(X, t, w);
+    test_loss(i) = LinearRegCost(XTest, xTest_t, w);
   end
   
   figure('Name', 'Red Validation');
-  plot(1:maxOrd, train_loss, "b-o");
-  xlabel("Polynomial Order");
-  ylabel("Training Loss");
+  plot(1:maxOrd, train_loss, 'b-o');
+  xlabel('Polynomial Order');
+  ylabel('Training Loss');
   
   figure('Name', 'Red Validation');
-  plot(1:maxOrd, log10(test_loss), "b-o");
-  xlabel("Polynomial Order");
-  ylabel("Log Validation Loss");
+  plot(1:maxOrd, log10(test_loss), 'b-o');
+  xlabel('Polynomial Order');
+  ylabel('Log Validation Loss');
 end

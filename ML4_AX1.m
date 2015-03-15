@@ -1,7 +1,7 @@
 function ML4_AX1()
   % Read the CSV files
-  red = dlmread("winequality-red.csv", ";");
-  white = dlmread("winequality-white.csv", ";");
+  red = dlmread('winequality-red.csv', ';');
+  white = dlmread('winequality-white.csv', ';');
   
   % Remove first row as it holds 0s because of the labels in the CSV file
   red = red(2:end,:);
@@ -34,10 +34,10 @@ function ML4_AX1()
   cost
   
   figure('Name', 'Red Predictions')
-  plot(predictions, red_Ttest, ".b");
+  plot(predictions, red_Ttest, '.b');
   title('Red Wine Predictions, Predictions vs. Target Values');
-  xlabel("Predictions");
-  ylabel("Targets");
+  xlabel('Predictions');
+  ylabel('Targets');
   
   % Validate without bias, it is added again inside the function to avoid confusion
   LinearRegValidation(red_X, red_t, red_Xtest, red_Ttest, 7);
@@ -54,10 +54,10 @@ function ML4_AX1()
   end
   
   figure('Name', 'Reguralized Linear Regression');
-  plot(lambda, loss, "b-o");
+  plot(lambda, loss, 'b-o');
   title('70/30 Validation, Reguralized Linear Regression');
-  xlabel("Lambda");
-  ylabel("Validation Loss");
+  xlabel('Lambda');
+  ylabel('Validation Loss');
   
   % Validate without bias, it is added again inside the function to avoid confusion
   [min_cost_reguralized, best_lambda] = CrossValidation(red_X, red_t, red_Xtest, red_Ttest, 10, lambda)

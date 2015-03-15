@@ -55,7 +55,7 @@ function knnCV(X, t, kVals, N) % N is the fold
           
           % max can return the index of the max element, 
           % but there can be many equal max elements
-          (max_val) = max(vals);
+          max_val = max(vals);
           max_pos = find(vals == max_val);
           
           % there can be more than one class with a max
