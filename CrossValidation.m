@@ -34,9 +34,9 @@ function [min_cost, best_lambda] = CrossValidation(x, t, testX, testT, K, lambda
       trainT_fold(fStart:fEnd,:) = [];
       
       w = TrainRegularizedLinearReg(trainX_fold, trainT_fold, lambda(i));
-      (train_loss(i, k)) = ReguralizedLinearRegCost(trainX_fold, trainT_fold, w, lambda(i));
-      (cv_loss(i, k)) = ReguralizedLinearRegCost(testX_fold, testT_fold, w, lambda(i));
-      (test_loss(i, k)) = ReguralizedLinearRegCost(testX, testT, w, lambda(i));
+      (train_loss(i, k)) = LinearRegCost(trainX_fold, trainT_fold, w)/2;
+      (cv_loss(i, k)) = LinearRegCost(testX_fold, testT_fold, w)/2;
+      (test_loss(i, k)) = LinearRegCost(testX, testT, w)/2;
     end % end of folding loop
   end % end of order loop
   
@@ -53,6 +53,7 @@ function [min_cost, best_lambda] = CrossValidation(x, t, testX, testT, K, lambda
   plot(lambda, mean_Train, "b-o");
   plot(lambda, mean_CV, "r-o");
   plot(lambda, mean_Test, "k-o");
+  legend('Mean Train Loss', 'Mean CV Loss', 'Mean Test Loss');
   title('10-Fold Cross Validation, Reguralized Linear Regression');
   xlabel("Lambda");
   ylabel("Validation Loss");

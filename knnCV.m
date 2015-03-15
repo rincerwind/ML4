@@ -61,19 +61,20 @@ function knnCV(X, t, kVals, N) % N is the fold
           % there can be more than one class with a max
           % in this case choose randomly
           if length(max_pos)>1
-            rand_max = randperm(length(max_pos));
-            max_pos = max_pos(rand_max(1));
+            max_pos = max_pos(1);
+            %rand_max = randperm(length(max_pos));
+            %max_pos = max_pos(rand_max(1));
           end
           c_predict(i) = bins(max_pos);
       end
       
       % perform 0/1 loss (Accuracy)
-      err(k, fold) = sum(c_predict~=testT);
+      err(k, fold) = sum(c_predict~=testT)/length(testT);
     end % end of fold loop
   end % end of K loop
   
   figure('Name', '10-Fold KNN');
-  plot(kVals, sum(err,2) ./ m, 'b-o');
+  plot(kVals, mean(err,2), 'b-o');
   title('10-Fold Cross Validation, KNN');
   xlabel('K');
   ylabel('Error');

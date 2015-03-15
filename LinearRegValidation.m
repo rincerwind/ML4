@@ -5,9 +5,11 @@ function LinearRegValidation(x, t, xTest, xTest_t, maxOrd)
   train_loss = zeros(1,maxOrd);
   test_loss = zeros(1,maxOrd);
   
+  % Normalize the data as the values get pretty high
   x = Normalize(x);
   xTest = Normalize(xTest);
   
+  % Add biases
   X = ones(x_m,1);
   XTest = ones(xTest_m,1);
   

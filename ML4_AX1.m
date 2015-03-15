@@ -45,7 +45,7 @@ function ML4_AX1()
   
   
   % Task 2 - Reguralized Linear Regression -------------------------------------------
-  lambda = [-0.5, -0.1, -0.05, -0.01, 0, 0.01, 0.05, 0.1, 0.5, 1, 5, 10, 20, 25];
+  lambda = [0, 0.01, 0.05, 0.1, 0.5, 1, 2, 5, 10];
   loss = ones(length(lambda),1);
   
   for i=1:length(lambda)
@@ -66,7 +66,7 @@ function ML4_AX1()
   % Task 3 - K-Nearest Neighbours ----------------------------------------------------
   
   % Do a 10-Fold KNN
-  %knnCV([red_X; red_Xtest], [red_t; red_Ttest], [1, 5, 10, 30, 50, 100], 10);
+  knnCV([red_X; red_Xtest], [red_t; red_Ttest], [1, 3, 7, 11, 19], 10);
   %simon_knnCV([red_X; red_Xtest], [red_t; red_Ttest], [1, 5, 10, 30, 50, 100], 10);
   % ---------------------------------------------------------------------------------- 
 end
