@@ -61,9 +61,8 @@ function knnCV(X, t, kVals, N) % N is the fold
           % there can be more than one class with a max
           % in this case choose randomly
           if length(max_pos)>1
-            max_pos = max_pos(1);
-            %rand_max = randperm(length(max_pos));
-            %max_pos = max_pos(rand_max(1));
+            rand_max = randperm(length(max_pos));
+            max_pos = max_pos(rand_max(1));
           end
           c_predict(i) = bins(max_pos);
       end
