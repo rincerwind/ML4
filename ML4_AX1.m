@@ -11,12 +11,12 @@ function ML4_AX1()
   [red_m, red_n] = size(red);
   [white_m, white_n] = size(white);
   
-  % Init weights
-  w_red = zeros(red_n, 1);
-  w_white = zeros(white_n, 1);
+  % Normalize all features, except the target values
+  %red(:,1:end-1) = Normalize( red(:,1:end-1) );
+  %white(:,1:end-1) = Normalize( white(:,1:end-1) );
   
   % Plot the bar-plots
-  barPlots(red(:,12), white(:,12));
+  barPlots(red(:,end), white(:,end));
   
   % Task 1 - Linear Regression -------------------------------------------------------
   % Divide the data sets red wine into training and test sets
@@ -25,18 +25,12 @@ function ML4_AX1()
   % Calc rows for red data sets
   red_X_m = size(red_X, 1);
   red_Xtest_m = size(red_Xtest, 1);
-
-  
-  % Add biases to the new data sets
-  red_X = [ones(red_X_m, 1), red_X];
-  red_Xtest = [ones(red_Xtest_m, 1), red_Xtest];
-
   
   % Fit the linear model
-  w_red = TrainLinearReg(red_X, red_t);
+  w_red = TrainLinearReg([ones(red_X_m, 1), red_X], red_t);
   
   % Calc cost and make predictions for test set
-  [cost, predictions] = LinearRegCost(red_Xtest, red_Ttest, w_red);
+  [cost, predictions] = LinearRegCost([ones(red_Xtest_m, 1), red_Xtest], red_Ttest, w_red);
   cost
   
   figure('Name', 'Red Predictions')
@@ -46,24 +40,33 @@ function ML4_AX1()
   ylabel("Targets");
   
   % Validate without bias, it is added again inside the function to avoid confusion
-  LinearRegValidation(red_X(:,2:end), red_t, red_Xtest(:,2:end), red_Ttest, 8);
+  LinearRegValidation(red_X, red_t, red_Xtest, red_Ttest, 7);
   % ---------------------------------------------------------------------------------- 
   
   
   % Task 2 - Reguralized Linear Regression -------------------------------------------
-  lambda = -2:0.02:2;
+  lambda = [-0.5, -0.1, -0.05, -0.01, 0, 0.01, 0.05, 0.1, 0.5, 1, 5, 10, 20, 25];
+  loss = ones(length(lambda),1);
   
   for i=1:length(lambda)
-    w = TrainRegularizedLinearReg(red_X, red_t, lambda(i));
-    [cost, predictions] = ReguralizedLinearRegCost(red_Xtest, red_Ttest, w, lambda(i));
-    err(i) = cost;
+    w = TrainRegularizedLinearReg([ones(red_X_m, 1), red_X], red_t, lambda(i));
+    [loss(i), predictions] = ReguralizedLinearRegCost([ones(red_Xtest_m, 1), red_Xtest], red_Ttest, w, lambda(i));
   end
   
   figure('Name', 'Reguralized Linear Regression');
-  plot(lambda, log10(err), "b-");
+  plot(lambda, loss, "b-o");
+  title('70/30 Validation, Reguralized Linear Regression');
   xlabel("Lambda");
   ylabel("Validation Loss");
   
-  [min_cost, best_lambda] = CrossValidation([red_X; red_Xtest], [red_t; red_Ttest], 10, 8)
+  % Validate without bias, it is added again inside the function to avoid confusion
+  [min_cost_reguralized, best_lambda] = CrossValidation(red_X, red_t, red_Xtest, red_Ttest, 10, lambda)
+  % ---------------------------------------------------------------------------------- 
+  
+  % Task 3 - K-Nearest Neighbours ----------------------------------------------------
+  
+  % Do a 10-Fold KNN
+  %knnCV([red_X; red_Xtest], [red_t; red_Ttest], [1, 5, 10, 30, 50, 100], 10);
+  %simon_knnCV([red_X; red_Xtest], [red_t; red_Ttest], [1, 5, 10, 30, 50, 100], 10);
   % ---------------------------------------------------------------------------------- 
 end
