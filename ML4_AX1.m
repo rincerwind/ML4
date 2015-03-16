@@ -216,26 +216,26 @@ function ML4_AX1()
   mean_Test = mean(test_loss,2);
   
   [min_loss, min_indx] = min(mean_Test);
-  redLinearReg_loss = min_loss
-  best_lambda = lambdas(min_indx)
   
   figure('Name', '10-Fold Cross Validation');
   hold on;
   plot(lambdas, mean_Train, 'b-o');
   plot(lambdas, mean_CV, 'r-o');
   plot(lambdas, mean_Test, 'k-o');
-  legend('Mean Train Loss', 'Mean CV Loss', 'Mean Test Loss');
+  legend('Mean Train Loss', 'Mean CV Loss', 'Mean Test Loss', ... 
+      'Location', 'northwest');
   title('10-Fold Cross Validation, Reguralized Linear Regression');
-  xlabel('Lambda');
-  ylabel('Validation Loss');
+  xlabel({'Lambda',['Best Lambda = ', num2str(lambdas(min_indx))]});
+  ylabel({'Loss', ['Minimum Loss = ', num2str(min_loss)]});
   hold off;
   % -----------------------------------------------------------------------
   
   %% Task 3 - K-Nearest Neighbours
   
-  % Do a 10-Fold KNN
-  X = [red_X; red_Xtest];
-  t = [red_t; red_Ttest];
+  % Do a 10-Fold KNN, use the 70% set to find the best K
+  X = red_X;
+  t = red_t;
+  
   kVals = [1, 3, 7, 11, 19];
   N = 10;
   m = size(X,1);
@@ -312,10 +312,59 @@ function ML4_AX1()
     end % end of fold loop
   end % end of K loop
   
+  mean_errs = mean(err,2);
+  [min_err, min_indx] = min(mean_errs);
+  
+  
   figure('Name', '10-Fold KNN');
-  plot(kVals, mean(err,2), 'b-o');
+  plot(kVals, mean_errs, 'b-o');
   title('10-Fold Cross Validation, KNN');
   xlabel('K');
   ylabel('Error');
+  % -----------------------------------------------------------------------
+  
+  
+  % Build Confusion Matrix ------------------------------------------------
+  % Use the 70% set for training and the 30% set to build 
+  % the Confusion Matrix
+  testX = red_Xtest;
+  testT = red_Ttest;
+  
+  trainX = red_X;
+  trainT = red_t;
+  
+  train_m = size(trainX,1);
+  test_m = size(testX,1);
+      
+  best_K = kVals(min_indx);
+  numClasses = length(unique_t);
+  confusion = zeros(numClasses, numClasses);
+  remap_inds = zeros(1,unique_t(end));
+  
+  for k = 1:length(unique_t)
+    remap_inds(unique_t(k)) = k;
+  end
+  
+  % KNN for all test cases
+  for i=1:test_m
+    rep_testX = repmat(testX(i,:), train_m, 1);
+    dists = sum((trainX - rep_testX) .^ 2, 2);
+    [sDists, inds] = sort(dists,'ascend');
+    [vals, bins] = hist(trainT(inds(1:best_K)), unique_t);
+
+    max_val = max(vals);
+    max_pos = find(vals == max_val);
+
+    if length(max_pos)>1
+      rand_max = randperm(length(max_pos));
+      max_pos = max_pos(rand_max(1));
+    end
+
+    pred_i = remap_inds(bins(max_pos));
+    true_i = remap_inds(testT(i));
+    confusion(pred_i, true_i) = confusion(pred_i, true_i) + 1;
+  end
+      
+  confusion
   % -----------------------------------------------------------------------
 end
